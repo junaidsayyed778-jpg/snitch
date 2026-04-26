@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Inter:wght@300;400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e5e2e1",
+                        "primary-container": "#ffd700",
+                        "primary-fixed": "#ffe16d",
+                        "on-secondary-fixed": "#221b00",
+                        "error": "#ffb4ab",
+                        "primary": "#fff6df",
+                        "on-surface-variant": "#d0c6ab",
+                        "on-surface": "#e5e2e1",
+                        "background": "#131313",
+                        "inverse-primary": "#705d00",
+                        "tertiary-fixed-dim": "#00dbe8",
+                        "on-tertiary-fixed": "#002022",
+                        "on-background": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-primary-fixed": "#221b00",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "surface": "#131313",
+                        "on-tertiary-fixed-variant": "#004f54",
+                        "on-tertiary-container": "#006a70",
+                        "outline": "#999077",
+                        "secondary": "#dbc677",
+                        "surface-dim": "#131313",
+                        "on-primary-container": "#705e00",
+                        "primary-fixed-dim": "#e9c400",
+                        "secondary-fixed": "#f8e290",
+                        "on-secondary-fixed-variant": "#544601",
+                        "surface-tint": "#e9c400",
+                        "tertiary-fixed": "#79f5ff",
+                        "surface-bright": "#393939",
+                        "on-primary-fixed-variant": "#544600",
+                        "on-primary": "#3a3000",
+                        "outline-variant": "#4d4732",
+                        "on-tertiary": "#00363a",
+                        "tertiary": "#defcff",
+                        "surface-container-high": "#2a2a2a",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#353534",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-container": "#544601",
+                        "surface-container-lowest": "#0e0e0e",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary": "#3a3000",
+                        "tertiary-container": "#00f1ff",
+                        "on-secondary-container": "#c9b468",
+                        "surface-container": "#201f1f",
+                        "secondary-fixed-dim": "#dbc677"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-input:focus-within .input-line {
+            width: 100%;
+            left: 0;
+        }
+        .input-line {
+            width: 0%;
+            left: 50%;
+            transition: width 0.4s ease, left 0.4s ease;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#131313] px-8 h-20 w-full flex justify-between items-center bg-[#1c1b1b]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FFD700] cursor-pointer active:scale-95 duration-150">close</span>
+</div>
+<h1 class="font-['Manrope'] tracking-tighter uppercase font-bold text-2xl font-black tracking-[-0.05em] text-[#FFD700]">NOCTURNAL</h1>
+<div class="w-6"></div> <!-- Spacer for center alignment -->
+</header>
+<main class="min-h-screen pt-32 pb-24 px-8 flex flex-col max-w-md mx-auto">
+<!-- Editorial Header Section -->
+<section class="mb-16">
+<h2 class="font-headline text-5xl font-extrabold tracking-tight text-primary-container leading-none mb-6">BECOME<br/>PART OF THE<br/>SILENT CIRCLE</h2>
+<p class="font-body text-on-surface-variant text-lg leading-relaxed max-w-[80%]">Curate your identity. Enter the obsidian realm of nocturnal elegance.</p>
+</section>
+<!-- Registration Form -->
+<form class="space-y-12">
+<!-- Full Name -->
+<div class="relative group editorial-input">
+<label class="block font-label text-[10px] tracking-widest uppercase text-outline mb-2" for="full_name">Full Name</label>
+<input class="w-full bg-transparent border-0 border-b-2 border-outline-variant py-3 px-0 text-on-surface focus:ring-0 focus:border-outline-variant placeholder:text-surface-variant transition-all font-body text-lg" id="full_name" name="full_name" placeholder="Elias Thorne" type="text"/>
+<div class="input-line absolute bottom-0 h-[2px] bg-primary-container"></div>
+</div>
+<!-- Email -->
+<div class="relative group editorial-input">
+<label class="block font-label text-[10px] tracking-widest uppercase text-outline mb-2" for="email">Email Address</label>
+<input class="w-full bg-transparent border-0 border-b-2 border-outline-variant py-3 px-0 text-on-surface focus:ring-0 focus:border-outline-variant placeholder:text-surface-variant transition-all font-body text-lg" id="email" name="email" placeholder="curator@nocturnal.com" type="email"/>
+<div class="input-line absolute bottom-0 h-[2px] bg-primary-container"></div>
+</div>
+<!-- Contact Number -->
+<div class="relative group editorial-input">
+<label class="block font-label text-[10px] tracking-widest uppercase text-outline mb-2" for="contact">Contact Number</label>
+<input class="w-full bg-transparent border-0 border-b-2 border-outline-variant py-3 px-0 text-on-surface focus:ring-0 focus:border-outline-variant placeholder:text-surface-variant transition-all font-body text-lg" id="contact" name="contact" placeholder="+1 (555) 000-0000" type="tel"/>
+<div class="input-line absolute bottom-0 h-[2px] bg-primary-container"></div>
+</div>
+<!-- Password -->
+<div class="relative group editorial-input">
+<label class="block font-label text-[10px] tracking-widest uppercase text-outline mb-2" for="password">Secret Key</label>
+<input class="w-full bg-transparent border-0 border-b-2 border-outline-variant py-3 px-0 text-on-surface focus:ring-0 focus:border-outline-variant placeholder:text-surface-variant transition-all font-body text-lg" id="password" name="password" placeholder="••••••••" type="password"/>
+<div class="input-line absolute bottom-0 h-[2px] bg-primary-container"></div>
+</div>
+<!-- Seller Checkbox (Asymmetric Styling) -->
+<div class="flex items-start gap-4 pt-4">
+<div class="relative flex items-center justify-center w-6 h-6 mt-1">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline-variant bg-transparent rounded-sm checked:bg-primary-container checked:border-primary-container transition-all cursor-pointer" id="isSeller" name="isSeller" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary-fixed opacity-0 peer-checked:opacity-100 pointer-events-none text-sm font-bold" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<label class="flex flex-col cursor-pointer" for="isSeller">
+<span class="font-headline font-bold text-on-surface tracking-wide">Register as Seller</span>
+<span class="font-body text-xs text-on-surface-variant">Access the gallery dashboard and manage your collection.</span>
+</label>
+</div>
+<!-- CTA Section -->
+<div class="pt-8 space-y-6">
+<button class="w-full h-16 bg-gradient-to-br from-primary-container to-secondary-fixed text-on-secondary-fixed font-label font-extrabold uppercase tracking-[0.2em] rounded-md shadow-2xl shadow-primary-container/10 active:scale-[0.98] transition-all hover:brightness-110" type="submit">
+                    Initialize Account
+                </button>
+<p class="text-center font-label text-[10px] tracking-widest text-outline uppercase">
+                    Already an initiate? <a class="text-primary-container hover:underline underline-offset-4" href="#">Sign In</a>
+</p>
+</div>
+</form>
+</main>
+<!-- Footer -->
+<footer class="w-full max-w-7xl mx-auto px-12 py-8 flex flex-col items-center gap-4 bg-[#131313]">
+<div class="flex gap-8">
+<a class="font-['Inter'] text-[10px] tracking-widest uppercase text-neutral-600 hover:text-[#FFD700] transition-opacity duration-300" href="#">Privacy</a>
+<a class="font-['Inter'] text-[10px] tracking-widest uppercase text-neutral-600 hover:text-[#FFD700] transition-opacity duration-300" href="#">Terms</a>
+<a class="font-['Inter'] text-[10px] tracking-widest uppercase text-neutral-600 hover:text-[#FFD700] transition-opacity duration-300" href="#">Legal</a>
+</div>
+<p class="font-['Inter'] text-[10px] tracking-widest uppercase text-neutral-600">© 2024 THE SILENT CURATOR</p>
+</footer>
+<!-- Decorative Aesthetic Elements -->
+<div class="fixed top-0 right-0 w-64 h-64 bg-primary-container/5 blur-[120px] pointer-events-none -z-10"></div>
+<div class="fixed bottom-0 left-0 w-96 h-96 bg-primary-container/5 blur-[160px] pointer-events-none -z-10"></div>
+</body></html>

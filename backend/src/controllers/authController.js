@@ -1,6 +1,7 @@
 import { config } from "../config/config.js"
 import userModel from "../models/userModel.js"
 import jwt from "jsonwebtoken"
+import { loginUser } from "../services/authService.js"
 
 async function sendTokenResponse(user, res, message) {
     const token = jwt.sign({
@@ -65,24 +66,34 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     const { email, password } = req.body
 
-    const user = await userModel.findOne({ email })
+    try {
+        const { token, user } = await loginUser(email, password)
 
-    if (!user) {
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
+        res.status(200).json({
+            message: "User logged in successfully",
+            success: true,
+            user: {
+                id: user._id,
+                email: user.email,
+                contact: user.contact,
+                fullname: user.fullname,
+                role: user.role,
+                profilePic: user.profilePic
+            }
+        })
+    } catch (err) {
         return res.status(400).json({
-            message: "Invalid email or password"
+            message: err.message
         })
     }
-
-    const isMatch = await user.comparePassword(password)
-
-    if (!isMatch) {
-        return res.status(400).json({
-            message: "Invalid email or password"
-        })
-    }
-    await sendTokenResponse(user, res, "User logged in successfully")
 }
-
 export const googleCallback = async (req, res) => {
     console.log(req.user)
     try {

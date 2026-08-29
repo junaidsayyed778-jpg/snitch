@@ -30,3 +30,45 @@ export async function loginUser(email, password) {
         user,
     };
 }
+
+export async function registerUser({
+    email,
+    contact,
+    password,
+    fullname,
+    isSeller
+}) {
+    const existingUser = await userModel.findOne({
+        $or: [
+            { email },
+            { contact }
+        ]
+    });
+
+    if (existingUser) {
+        throw new Error("User already exists");
+    }
+
+    const user = await userModel.create({
+        email,
+        contact,
+        password,
+        fullname,
+        role: isSeller ? "seller" : "buyer"
+    });
+
+    const token = jwt.sign(
+        {
+            id: user._id,
+        },
+        config.JWT_SECRET,
+        {
+            expiresIn: "7d",
+        }
+    );
+
+    return {
+        token,
+        user,
+    };
+}

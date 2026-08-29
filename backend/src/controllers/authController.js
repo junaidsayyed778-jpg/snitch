@@ -1,7 +1,10 @@
 import { config } from "../config/config.js"
 import userModel from "../models/userModel.js"
 import jwt from "jsonwebtoken"
-import { loginUser } from "../services/authService.js"
+import {
+    loginUser,
+    registerUser
+} from "../services/authService.js"
 
 async function sendTokenResponse(user, res, message) {
     const token = jwt.sign({
@@ -30,35 +33,47 @@ async function sendTokenResponse(user, res, message) {
         }
     })
 }
+
 export const register = async (req, res) => {
-    const { email, contact, password, fullname, isSeller } = req.body
+    const {
+        email,
+        contact,
+        password,
+        fullname,
+        isSeller
+    } = req.body
 
     try {
-        const existingUser = await userModel.findOne({
-            $or: [
-                { email },
-                { contact }
-            ]
-        })
-
-        if (existingUser) {
-            return res.status(400).json({
-                message: "User already exists"
-            })
-        }
-
-        const user = await userModel.create({
+        const { token, user } = await registerUser({
             email,
             contact,
             password,
             fullname,
-            role: isSeller ? "seller" : "buyer"
+            isSeller
         })
-        await sendTokenResponse(user, res, "user registered successfully")
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
+        res.status(201).json({
+            message: "User registered successfully",
+            success: true,
+            user: {
+                id: user._id,
+                email: user.email,
+                contact: user.contact,
+                fullname: user.fullname,
+                role: user.role,
+                profilePic: user.profilePic
+            }
+        })
     } catch (err) {
-        console.log(err)
-        return res.status(500).json({
-            message: "Server error"
+        return res.status(400).json({
+            message: err.message
         })
     }
 }

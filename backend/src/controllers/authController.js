@@ -1,5 +1,6 @@
 import userModel from "../models/userModel.js"
 import { generateToken } from "../utils/token.js"
+import { setAuthCookie } from "../utils/cookie.js"
 import {
     loginUser,
     registerUser
@@ -23,12 +24,7 @@ export const register = async (req, res) => {
             isSeller
         })
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        })
+        setAuthCookie(res, token)
 
         res.status(201).json({
             message: "User registered successfully",
@@ -55,12 +51,7 @@ export const login = async (req, res) => {
     try {
         const { token, user } = await loginUser(email, password)
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        })
+        setAuthCookie(res, token)
 
         res.status(200).json({
             message: "User logged in successfully",
@@ -104,11 +95,7 @@ export const googleCallback = async (req, res) => {
         // Generate JWT and set cookie
         const token = generateToken(user._id)
 
-        res.cookie("token", token, {
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        })
+        setAuthCookie(res, token)
 
         res.redirect("http://localhost:5173/")
     } catch (err) {

@@ -1,38 +1,9 @@
-import { config } from "../config/config.js"
 import userModel from "../models/userModel.js"
-import jwt from "jsonwebtoken"
+import { generateToken } from "../utils/token.js"
 import {
     loginUser,
     registerUser
 } from "../services/authService.js"
-
-async function sendTokenResponse(user, res, message) {
-    const token = jwt.sign({
-        id: user._id,
-    }, config.JWT_SECRET, {
-        expiresIn: "7d"
-    })
-
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: false, // Set to true in production
-        sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-
-    res.status(200).json({
-        message: message || "success",
-        success: true,
-        user: {
-            id: user._id,
-            email: user.email,
-            contact: user.contact,
-            fullname: user.fullname,
-            role: user.role,
-            profilePic: user.profilePic
-        }
-    })
-}
 
 export const register = async (req, res) => {
     const {
@@ -131,11 +102,7 @@ export const googleCallback = async (req, res) => {
         }
 
         // Generate JWT and set cookie
-        const token = jwt.sign(
-            { id: user._id },
-            config.JWT_SECRET,
-            { expiresIn: "7d" }
-        )
+        const token = generateToken(user._id)
 
         res.cookie("token", token, {
             secure: false,

@@ -52,3 +52,28 @@ export async function registerUser({
     user,
   };
 }
+
+export async function googleLoginUser(profile) {
+  const email = profile.emails[0].value
+  const fullname = profile.displayName
+
+  let user = await userModel.findOne({ email })
+
+  if (!user) {
+    user = await userModel.create({
+      email,
+      googleId: profile.id,
+      fullname,
+      contact: "N/A",
+      password: "google-oauth-" + profile.id,
+      role: "buyer"
+    })
+  }
+
+  const token = generateToken(user._id);
+
+  return {
+    token,
+    user,
+  };
+}

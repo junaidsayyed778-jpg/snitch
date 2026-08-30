@@ -5,9 +5,11 @@ import cors from "cors"
 import authRoutes from "./routes/authRoutes.js"
 import productRoute from "./routes/productRoute.js"
 import cartRoute from "./routes/cartRoute.js"
+import { errorMiddleware } from "./middleware/errorMiddleware.js"
 import {Strategy as GoogleStrategy} from "passport-google-oauth20"
 import passport from "passport"
 import { config } from "../src/config/config.js"
+import AppError from "./errors/AppError.js"
 
 const app = express()
 
@@ -40,6 +42,12 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes)
 app.use("/api/products", productRoute)
 app.use("/api/cart", cartRoute)
+
+app.use((req, res, next) => {
+    next(new AppError(`Route ${req.originalUrl} not found`, 404))
+})
+
+app.use(errorMiddleware)
 
 
 export default app

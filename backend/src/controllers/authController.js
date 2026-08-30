@@ -1,83 +1,68 @@
 import { setAuthCookie } from "../utils/cookie.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import {
   loginUser,
   registerUser,
   googleLoginUser,
 } from "../services/authService.js";
 
-export const register = async (req, res) => {
+export const register = asyncHandler(async (req, res) => {
   const { email, contact, password, fullname, isSeller } = req.body;
 
-  try {
-    const { token, user } = await registerUser({
-      email,
-      contact,
-      password,
-      fullname,
-      isSeller,
-    });
+  const { token, user } = await registerUser({
+    email,
+    contact,
+    password,
+    fullname,
+    isSeller,
+  });
 
-    setAuthCookie(res, token);
+  setAuthCookie(res, token);
 
-    res.status(201).json({
-      message: "User registered successfully",
-      success: true,
-      user: {
-        id: user._id,
-        email: user.email,
-        contact: user.contact,
-        fullname: user.fullname,
-        role: user.role,
-        profilePic: user.profilePic,
-      },
-    });
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
-};
+  res.status(201).json({
+    message: "User registered successfully",
+    success: true,
+    user: {
+      id: user._id,
+      email: user.email,
+      contact: user.contact,
+      fullname: user.fullname,
+      role: user.role,
+      profilePic: user.profilePic,
+    },
+  });
+});
 
-export const login = async (req, res) => {
+export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    const { token, user } = await loginUser(email, password);
+  const { token, user } = await loginUser(email, password);
 
-    setAuthCookie(res, token);
+  setAuthCookie(res, token);
 
-    res.status(200).json({
-      message: "User logged in successfully",
-      success: true,
-      user: {
-        id: user._id,
-        email: user.email,
-        contact: user.contact,
-        fullname: user.fullname,
-        role: user.role,
-        profilePic: user.profilePic,
-      },
-    });
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
-};
-export const googleCallback = async (req, res) => {
-  try {
-    const { token } = await googleLoginUser(req.user);
+  res.status(200).json({
+    message: "User logged in successfully",
+    success: true,
+    user: {
+      id: user._id,
+      email: user.email,
+      contact: user.contact,
+      fullname: user.fullname,
+      role: user.role,
+      profilePic: user.profilePic,
+    },
+  });
+});
 
-    setAuthCookie(res, token);
+export const googleCallback = asyncHandler(async (req, res) => {
+  const { token } = await googleLoginUser(req.user);
 
-    res.redirect("http://localhost:5173/");
-  } catch (err) {
-    console.error("Google callback error:", err);
-    res.redirect("http://localhost:5173/login");
-  }
-};
+  setAuthCookie(res, token);
 
-export const getMe = async (req, res) => {
+  res.redirect("http://localhost:5173/");
+});
+
+export const getMe = asyncHandler(async (req, res) => {
   const user = req.user;
 
   res.status(200).json({
@@ -92,15 +77,17 @@ export const getMe = async (req, res) => {
       profilePic: user.profilePic,
     },
   });
-};
+});
 
-export const logout = async (req, res) => {
+export const logout = asyncHandler(async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false, // Set to true in production
+    secure: false,
     sameSite: "lax",
   });
-  res
-    .status(200)
-    .json({ message: "User logged out successfully", success: true });
-};
+
+  res.status(200).json({
+    message: "User logged out successfully",
+    success: true,
+  });
+});

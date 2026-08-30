@@ -1,17 +1,18 @@
 import userModel from "../models/userModel.js";
 import { generateToken } from "../utils/token.js";
+import AppError from "../errors/AppError.js";
 
 export async function loginUser(email, password) {
   const user = await userModel.findOne({ email });
 
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new AppError("Invalid email or password", 400);
   }
 
   const isMatch = await user.comparePassword(password);
 
   if (!isMatch) {
-    throw new Error("Invalid email or password");
+    throw new AppError("Invalid email or password", 400);
   }
 
   const token = generateToken(user._id);
@@ -34,7 +35,7 @@ export async function registerUser({
   });
 
   if (existingUser) {
-    throw new Error("User already exists");
+    throw new AppError("User already exists", 409);
   }
 
   const user = await userModel.create({

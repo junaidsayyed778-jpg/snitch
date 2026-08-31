@@ -11,7 +11,6 @@ import {
   logout,
 } from "../controllers/authController.js";
 import passport from "passport";
-import { config } from "../config/config.js";
 import { authenticateUser } from "../middleware/authMiddleware.js";
 
 const router = Router();

@@ -60,16 +60,14 @@ export const getProductDetails = asyncHandler(async (req, res) => {
 
 export const addProductVariant = asyncHandler(async (req, res) => {
   const product = await addProductVariantService({
-    productId: req.params.productId,
+   productId: req.params.productId,
     sellerId: req.user._id,
-
     title: req.body.title,
     description: req.body.description,
-    priceAmount: req.body.priceAmount ?? req.body.price,
+    priceAmount: req.body.priceAmount,
     priceCurrency: req.body.priceCurrency,
     stock: req.body.stock,
     attributes: req.body.attributes,
-
     files: req.files,
   });
 
@@ -85,13 +83,11 @@ export const updateProductVariant = asyncHandler(async (req, res) => {
     productId: req.params.productId,
     variantId: req.params.variantId,
     sellerId: req.user._id,
-
     title: req.body.title,
     description: req.body.description,
     priceAmount: req.body.priceAmount,
     stock: req.body.stock,
     attributes: req.body.attributes,
-
     files: req.files,
   });
 

@@ -18,7 +18,7 @@ export async function createProduct({
     files.map((file) =>
       uploadFile({
         buffer: file.buffer,
-        fileName: file.originalName,
+        fileName: file.originalname,
       }),
     ),
   );
@@ -48,7 +48,7 @@ export async function getAllProducts(search) {
       {
         title: {
           $regex: search,
-          $options: "1",
+          $options: "i",
         },
       },
     ];

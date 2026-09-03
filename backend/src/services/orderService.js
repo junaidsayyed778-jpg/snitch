@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import orderModel from "../models/orderModel.js";
 import cartModel from "../models/cartModel.js";
 import productModel from "../models/productModel.js";
+import sellerOrderModel from "../models/sellerOrderModel.js";
 import AppError from "../errors/AppError.js";
 
 // CREATE ORDER
@@ -20,6 +21,7 @@ export async function createOrder(userId) {
       }
 
       const orderItems = [];
+      const sellerOrdersMap = new Map();
       let subtotal = 0;
 
       // 2. Validate every cart item
@@ -58,10 +60,7 @@ export async function createOrder(userId) {
         }
 
         // 5. SERVER-SIDE price
-        const unitPrice = 
-        variant?.price?.amount ?? 
-        product.price?.amount ?? 
-        0;
+        const unitPrice = variant?.price?.amount ?? product.price?.amount ?? 0;
 
         const lineTotal = unitPrice * cartItem.quantity;
 
@@ -91,6 +90,37 @@ export async function createOrder(userId) {
           lineTotal,
         });
 
+        const sellerId = product.seller.toString();
+
+        if (!sellerOrdersMap.has(sellerId)) {
+          sellerOrdersMap.set(sellerId, {
+            seller: product.seller,
+            items: [],
+            subtotal: 0,
+          });
+        }
+
+        const sellerOrderData = sellerOrdersMap.get(sellerId);
+
+        sellerOrderData.items.push({
+          product: product._id,
+          variantId: variant?._id ?? null,
+          variantTitle: variant?.title ?? null,
+
+          title: product.title,
+          image,
+          quantity: cartItem.quantity,
+
+          price: {
+            amount: unitPrice,
+            currency: "INR",
+          },
+
+          lineTotal,
+        });
+
+        sellerOrderData.subtotal += lineTotal;
+
         // 8. Reduce variant stock
         if (variant) {
           variant.stock -= cartItem.quantity;
@@ -119,6 +149,24 @@ export async function createOrder(userId) {
       createdOrder = order;
 
       // 10. Clear cart
+      for (const sellerOrderData of sellerOrdersMap.values()) {
+        await sellerOrderModel.create(
+          [
+            {
+              order: order._id,
+              buyer: userId,
+              seller: sellerOrderData.seller,
+              items: sellerOrderData.items,
+              subtotal: sellerOrderData.subtotal,
+              currency: "INR",
+              status: "pending",
+            },
+          ],
+          { session },
+        );
+      }
+
+      //11. Clear cart items
       cart.items = [];
 
       await cart.save({ session });

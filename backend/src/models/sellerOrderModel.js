@@ -100,7 +100,7 @@ const sellerOrderSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ["pending", "fulfilled", "cancelled"],
+  enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
     default: "pending",
   }
 },{timestamps: true});

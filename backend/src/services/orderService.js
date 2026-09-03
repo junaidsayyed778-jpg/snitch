@@ -180,7 +180,40 @@ export async function createOrder(userId) {
 
 // GET USER ORDERS
 export async function getUserOrders(userId) {
-  return orderModel.find({ user: userId }).sort({ createdAt: -1 });
+  const orders = await orderModel
+    .find({ user: userId })
+    .sort({ createdAt: -1 });
+
+  const orderIds = orders.map((order) => order._id);
+
+  const sellerOrders = await sellerOrderModel.find({
+    order: { $in: orderIds },
+  });
+
+  return orders.map((order) => {
+    const orderSellerOrders = sellerOrders.filter(
+      (sellerOrder) =>
+        sellerOrder.order.toString() === order._id.toString(),
+    );
+
+    const items = order.items.map((item) => {
+      const sellerOrder = orderSellerOrders.find(
+        (sellerOrder) =>
+          sellerOrder.seller.toString() === item.seller.toString(),
+      );
+
+      return {
+        ...item.toObject(),
+        status: sellerOrder?.status ?? item.status,
+      };
+    });
+
+    return {
+      ...order.toObject(),
+      items,
+      sellerOrders: orderSellerOrders,
+    };
+  });
 }
 
 // GET SINGLE ORDER

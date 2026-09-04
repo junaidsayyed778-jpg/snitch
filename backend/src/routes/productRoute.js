@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authenticateSeller from "../middleware/authMiddleware.js";
+import authenticateSeller from "../middlewares/authMiddleware.js";
 import multer from "multer";
 import {
   validateAddProductVariant,

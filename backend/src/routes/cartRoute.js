@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateUser } from "../middleware/authMiddleware.js";
+import { authenticateUser } from "../middlewares/authMiddleware.js";
 import {
   getCart,
   addToCart,

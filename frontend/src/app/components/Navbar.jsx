@@ -70,6 +70,19 @@ export default function Navbar() {
 
                 {/* Desktop Nav Links */}
                 <div className="hidden md:flex items-center gap-10">
+                    {user && (
+                        <Link
+                            to="/orders"
+                            className="text-[10px] tracking-[0.25em] uppercase font-black transition-all"
+                            style={{
+                                fontFamily: "Inter, sans-serif",
+                                color: location.pathname === "/orders" ? "#ffd700" : "#e5e2e1",
+                                opacity: location.pathname === "/orders" ? 1 : 0.6,
+                            }}
+                        >
+                            My Orders
+                        </Link>
+                    )}
                     {user?.role === "seller" && (
                         <Link
                             to="/seller/dashboard"
@@ -222,6 +235,7 @@ export default function Navbar() {
                     {[
                         { label: "Home", to: "/" },
                         { label: "Shop", to: "/" },
+                        ...(user ? [{ label: "My Orders", to: "/orders" }] : []),
                         ...(user?.role === "seller" ? [{ label: "Seller Dashboard", to: "/seller/dashboard" }] : []),
                     ].map((link) => (
                         <Link

@@ -4,6 +4,7 @@ import {
   getSellerOrders as getSellerOrdersService,
   getSellerOrderById as getSellerOrderByIdService,
   updateSellerOrderStatus as updateSellerOrderStatusService,
+  cancelSellerOrder as cancelSellerOrderService
 } from "../services/sellerOrderService.js";
 
 export const getSellerOrders = asyncHandler(async (req, res) => {
@@ -43,3 +44,16 @@ export const updateSellerOrderStatus = asyncHandler(async (req, res) => {
     order,
   });
 });
+
+export const cancelSellerOrder = asyncHandler(async(req, res) => {
+  const order = await cancelSellerOrderService({
+    sellerOrderId: req.params.sellerOrderId,
+    buyerId: req.user._id
+  })
+
+  req.status(200).json({
+    success: true,
+    message: "Order cancelled successfully",
+    order
+  })
+})

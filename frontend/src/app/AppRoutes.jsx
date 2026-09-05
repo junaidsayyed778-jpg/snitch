@@ -11,7 +11,10 @@ import Cart from "../features/products/pages/Cart";
 import Profile from "../features/auth/pages/Profile";
 import SellerProductDetails from "../features/products/pages/SellerProductDetails";
 import UpdateVariant from "../features/products/pages/UpdateVariant";
-
+import MyOrders from "../features/orders/pages/MyOrders";
+import SellerOrders from "../features/orders/pages/SellerOrders";
+import SellerLayout from "./components/SellerLayout";
+import PublicOnlyRoute from "./components/PublicOnlyRoute";
 
 export const routes = createBrowserRouter([
   {
@@ -24,61 +27,64 @@ export const routes = createBrowserRouter([
       },
       {
         path: "/register",
-        element: <Register />,
+        element: (
+          <PublicOnlyRoute>
+            <Register />
+          </PublicOnlyRoute>
+        ),
       },
       {
         path: "/login",
-        element: <Login />,
+        element: (
+          <PublicOnlyRoute>
+            <Login />
+          </PublicOnlyRoute>
+        ),
       },
       {
         path: "/product/:productId",
-        element: <ProductDetails />
+        element: <ProductDetails />,
       },
       {
         path: "/cart",
-        element: <Cart />
+        element: <Cart />,
+      },
+      {
+        path: "/orders",
+        element: <MyOrders />,
       },
       {
         path: "/profile",
-        element: <Profile />
+        element: <Profile />,
       },
       {
         path: "/seller",
+        element: (
+          <ProtectedRoute role="seller">
+            <SellerLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "/seller/create-product",
-            element: (
-              <ProtectedRoute role="seller">
-                <CreateProduct />
-              </ProtectedRoute>
-            ),
+            element: <CreateProduct />,
           },
           {
             path: "/seller/dashboard",
-            element: (
-              <ProtectedRoute role="seller">
-                <Dashboard />
-              </ProtectedRoute>
-            ),
+            element: <Dashboard />,
           },
-
+          {
+            path: "/seller/orders",
+            element: <SellerOrders />,
+          },
           {
             path: "/seller/product/:productId",
-            element:(
-              <ProtectedRoute role="seller">
-                <SellerProductDetails />
-              </ProtectedRoute>
-            )
+            element: <SellerProductDetails />,
           },
           {
             path: "/seller/product/:productId/variant/:variantId",
-            element:(
-              <ProtectedRoute role="seller">
-                <UpdateVariant />
-              </ProtectedRoute>
-            )
-          }
-
+            element: <UpdateVariant />,
+          },
         ],
       },
     ],

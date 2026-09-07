@@ -3,11 +3,15 @@ import {
   createOrder,
   getUserOrders,
   getOrderById,
-  cancelSellerOrder
+  cancelSellerOrder,
+  createPaymentOrder,
+  verifyPayment
 } from "../controllers/orderController.js";
 import { authenticateUser } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
+router.post("/payment", authenticateUser, createPaymentOrder)
+router.post("/verify-payment", authenticateUser, verifyPayment)
 router.post("/", authenticateUser, createOrder);
 router.get("/", authenticateUser, getUserOrders);
 router.get("/:orderId", authenticateUser, getOrderById);

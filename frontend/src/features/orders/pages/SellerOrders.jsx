@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+
 import useSellerOrders from "../hook/useSellerOrders";
+
 import OrderCardSkeleton from "../components/OrderCardSkeleton";
 import OrdersEmptyState from "../components/OrdersEmptyState";
-import { Link, useNavigate } from "react-router";
+
 
 const FILTER_TABS = [
   { key: "all", label: "All Orders" },
@@ -246,12 +249,7 @@ export default function SellerOrders() {
   const { orders, loading, error, fetchSellerOrders, updateOrderStatus } = useSellerOrders();
   const [activeFilter, setActiveFilter] = useState("all");
 
-  useEffect(() => {
-    if (user && user.role === "seller") {
-      fetchSellerOrders();
-    }
-  }, [user, fetchSellerOrders]);
-
+ const hasFetched = useRef(false); useEffect(() => { if (user?.role !== "seller") { return; } if (hasFetched.current) { return; } hasFetched.current = true; fetchSellerOrders(); }, [user?.role, fetchSellerOrders]);
   if (!user || user.role !== "seller") {
     // Should be handled by ProtectedRoute logically, but safe fallback
     return <div className="p-8 text-[#e5e2e1]">Unauthorized</div>;

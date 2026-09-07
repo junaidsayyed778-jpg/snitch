@@ -14,6 +14,20 @@ const orderSlice = createSlice({
         setOrders(state, action){
             state.orders = action.payload
         },
+        updateSellerOrderStatus(state, action) {
+            const { sellerOrderId, status } = action.payload;
+
+            for(const order of state.orders) {
+                const sellerOrder = order.sellerOrders?.find(
+                    (sellerOrder) => sellerOrder._id === sellerOrderId
+                );
+
+                if(sellerOrder) {
+                    sellerOrder.status = status;
+                    break;
+                }
+            }
+        },
 
         setLoading(state, action) {
             state.loading = action.payload;
@@ -21,12 +35,15 @@ const orderSlice = createSlice({
 
         setError(state, action) {
             state.errors = action.payload;
-        }
+        },        
     }
 })
 
+
+
 export const {
     setOrders,
+    updateSellerOrderStatus,
     setLoading,
     setError
 } = orderSlice.actions

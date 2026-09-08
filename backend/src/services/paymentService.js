@@ -8,6 +8,7 @@ import cartModel from "../models/cartModel.js";
 import productModel from "../models/productModel.js";
 import orderModel from "../models/orderModel.js";
 import sellerOrderModel from "../models/sellerOrderModel.js";
+import { getIO } from "../socket.js";
 
 
 // ======================================================
@@ -366,64 +367,64 @@ export async function verifyRazorpayPayment({
       createdOrder = order;
 
 
-      // ------------------------------------------------
-      // CREATE SELLER ORDERS
-      // ------------------------------------------------
+// ------------------------------------------------
+// CREATE SELLER ORDERS + NOTIFY SELLERS
+// ------------------------------------------------
 
-      for (
-        const sellerOrderData
-        of sellerOrderMap.values()
-      ) {
+const io = getIO();
 
-        await sellerOrderModel.create(
-          [
-            {
-              order: order._id,
+for (const sellerOrderData of sellerOrderMap.values()) {
+  const [sellerOrder] = await sellerOrderModel.create(
+    [
+      {
+        order: order._id,
+        buyer: userId,
+        seller: sellerOrderData.seller,
+        items: sellerOrderData.items,
+        subtotal: sellerOrderData.subtotal,
+        currency: "INR",
+        status: "pending",
+      },
+    ],
+    { session },
+  );
 
-              buyer: userId,
+  // Notify this specific seller that
+  // a new order has been created
 
-              seller:
-                sellerOrderData.seller,
+  io.to(`user:${sellerOrderData.seller}`).emit(
+    "order:new",
+    {
+      sellerOrderId: sellerOrder._id,
+      orderId: order._id,
+      buyerId: userId,
+      sellerId: sellerOrderData.seller,
+      status: "pending",
+    },
+  );
+}
 
-              items:
-                sellerOrderData.items,
+// ------------------------------------------------
+// CLEAR CART
+// ------------------------------------------------
 
-              subtotal:
-                sellerOrderData.subtotal,
+cart.items = [];
 
-              currency: "INR",
+await cart.save({
+  session,
+});
 
-              status: "pending",
-            },
-          ],
-          {
-            session,
-          },
-        );
-      }
+// ------------------------------------------------
+// RETURN CREATED ORDER
+// ------------------------------------------------
 
+return createdOrder;
 
-      // ------------------------------------------------
-      // CLEAR CART
-      // ------------------------------------------------
-
-      cart.items = [];
-
-      await cart.save({
-        session,
-      });
     });
-
-
-    // --------------------------------------------------
-    // RETURN CREATED ORDER
-    // --------------------------------------------------
-
-    return createdOrder;
-
   } finally {
-
     await session.endSession();
   }
+
+  return createdOrder;
 }
 

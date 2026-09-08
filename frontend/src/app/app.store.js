@@ -5,7 +5,7 @@ import cartReducer from "../features/products/state/cartSlice"
 import serverCartReducer from "../features/products/state/serverCartSlice"
 import orderReducer from "../features/orders/state/orderSlice"
 import sellerOrderReducer from "../features/orders/state/sellerOrderSlice"
-
+import notificationReducer from "../features/notifications/state/notifications"
 export const store = configureStore({
     reducer: {
         auth: authReducer,
@@ -13,6 +13,7 @@ export const store = configureStore({
         cart: cartReducer,
         serverCart: serverCartReducer,
         order: orderReducer,
-        sellerOrders: sellerOrderReducer
+        sellerOrders: sellerOrderReducer,
+        notifications: notificationReducer
     }
 })

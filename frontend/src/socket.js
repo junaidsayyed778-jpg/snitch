@@ -1,10 +1,12 @@
 import { io } from "socket.io-client";
 
 import { store } from "./app/app.store";
+import { addSellerOrder } from "./features/orders/state/sellerOrderSlice";
+import { markOrdersUnread } from "./features/notifications/state/notifications";
 
-import { markOrdersUnread } from "./features/notifications/state/notifications"
 const socket = io("http://localhost:5001", {
   withCredentials: true,
+  autoConnect: false,
 });
 
 socket.on("connect", () => {
@@ -25,6 +27,10 @@ socket.on("order:new", (data) => {
   console.log("🛒 NEW ORDER FOR SELLER:", data);
 
   store.dispatch(markOrdersUnread());
+
+  if (data?.sellerOrder) {
+    store.dispatch(addSellerOrder(data.sellerOrder));
+  }
 });
 
 /*
@@ -38,5 +44,17 @@ socket.on("order:status-updated", (data) => {
 
   store.dispatch(markOrdersUnread());
 });
+
+export const connectSocket = () => {
+  if (!socket.connected) {
+    socket.connect();
+  }
+};
+
+export const disconnectSocket = () => {
+  if (socket.connected) {
+    socket.disconnect();
+  }
+};
 
 export default socket;

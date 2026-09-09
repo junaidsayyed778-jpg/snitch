@@ -4,16 +4,24 @@ import { routes } from './AppRoutes.jsx'
 import { useSelector } from 'react-redux'
 import { useAuth } from '../features/auth/hook/useAuth.js'
 import { useEffect } from 'react'
+import { connectSocket, disconnectSocket } from '../socket'
 
 function App() {
   const { handleGetMe } = useAuth()
+  const user = useSelector(state => state.auth.user)
 
   useEffect(() => {
     handleGetMe()
   }, [])
-  
-  const user = useSelector(state=> state.auth.user)
-  console.log(user)
+
+  useEffect(() => {
+    if (user) {
+      connectSocket()
+    } else {
+      disconnectSocket()
+    }
+  }, [user])
+
   return (
     <RouterProvider router={routes} />
   )

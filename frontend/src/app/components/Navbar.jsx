@@ -5,10 +5,13 @@ import { useAuth } from "../../features/auth/hook/useAuth";
 import { useCart } from "../../features/products/hook/useCart";
 
 export default function Navbar() {
+  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const hasUnreadOrders = useSelector(
     (state) => state.notifications.hasUnreadOrders,
   );
+  const isOrdersPage = location.pathname === "/orders";
+  const isSellerOrdersPage = location.pathname === "/seller/orders";
   // Use serverCart for accurate backend-sync count
   const serverCartCount = useSelector((state) => state.serverCart.itemCount);
   // Fallback to local cart count (guests / before login)
@@ -21,7 +24,6 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { handleLogout } = useAuth();
   const { handleGetCart } = useCart();
 
@@ -83,8 +85,8 @@ export default function Navbar() {
               className="relative text-[10px] tracking-[0.25em] uppercase font-black transition-all"
               style={{
                 fontFamily: "Inter, sans-serif",
-                color: location.pathname === "/orders" ? "#ffd700" : "#e5e2e1",
-                opacity: location.pathname === "/orders" ? 1 : 0.6,
+                color: isOrdersPage ? "#ffd700" : "#e5e2e1",
+                opacity: isOrdersPage ? 1 : 0.6,
               }}
             >
               My Orders
@@ -96,7 +98,7 @@ export default function Navbar() {
           {user?.role === "seller" && (
             <Link
               to="/seller/dashboard"
-              className="text-[10px] tracking-[0.25em] uppercase font-black transition-all"
+              className="relative text-[10px] tracking-[0.25em] uppercase font-black transition-all"
               style={{
                 fontFamily: "Inter, sans-serif",
                 color: isSellerDashboard ? "#ffd700" : "#e5e2e1",
@@ -104,6 +106,9 @@ export default function Navbar() {
               }}
             >
               Seller Dashboard
+              {(hasUnreadOrders && (isSellerDashboard || isSellerOrdersPage)) && (
+                <span className="absolute -top-1.5 -right-3 w-2 h-2 rounded-full bg-red-500" />
+              )}
             </Link>
           )}
         </div>

@@ -1,8 +1,9 @@
 
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { memo, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import useSellerOrders from "../hook/useSellerOrders";
+import { markOrdersRead } from "../../notifications/state/notifications";
 
 import OrderCardSkeleton from "../components/OrderCardSkeleton";
 import OrdersEmptyState from "../components/OrdersEmptyState";
@@ -46,8 +47,10 @@ function getStatusColor(status) {
 // ─────────────────────────────────────────────────────────────
 // Seller Order Card internal component
 // ─────────────────────────────────────────────────────────────
-function SellerOrderRow({ order, onUpdateStatus }) {
+const SellerOrderRow = memo(function SellerOrderRow({ order, onUpdateStatus }) {
   const [expanded, setExpanded] = useState(false);
+  const firstItem = order.items?.[0];
+  const productImage = firstItem?.image;
   const itemCount = order.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   const statusColor = getStatusColor(order.status);
   
@@ -76,19 +79,24 @@ function SellerOrderRow({ order, onUpdateStatus }) {
         
         {/* Left: General Order Meta */}
         <div className="flex items-start gap-4">
-          <div
-            className="hidden sm:flex flex-col items-center justify-center w-12 h-12 flex-shrink-0"
-            style={{
-              background: "rgba(255,215,0,0.06)",
-              border: "1px solid rgba(255,215,0,0.18)",
-            }}
-          >
-            <span
-              className="material-symbols-outlined text-[22px]"
-              style={{ color: "#ffd700" }}
-            >
-              storefront
-            </span>
+          <div className="hidden sm:flex w-12 h-12 rounded-md overflow-hidden bg-neutral-900 border border-neutral-800 flex-shrink-0">
+            {productImage ? (
+              <img
+                src={productImage}
+                alt={firstItem?.title || "Product"}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span
+                  className="material-symbols-outlined text-[22px]"
+                  style={{ color: "#ffd700" }}
+                >
+                  storefront
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-1.5 pt-0.5">
@@ -239,15 +247,22 @@ function SellerOrderRow({ order, onUpdateStatus }) {
       </div>
     </article>
   );
-}
+})
 
 // ─────────────────────────────────────────────────────────────
 // Main Page Component
 // ─────────────────────────────────────────────────────────────
 export default function SellerOrders() {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const { orders, loading, error, fetchSellerOrders, updateOrderStatus } = useSellerOrders();
   const [activeFilter, setActiveFilter] = useState("all");
+
+  useEffect(() => {
+    if (user?.role === "seller") {
+      dispatch(markOrdersRead());
+    }
+  }, [user?.role, dispatch]);
 
  const hasFetched = useRef(false); useEffect(() => { if (user?.role !== "seller") { return; } if (hasFetched.current) { return; } hasFetched.current = true; fetchSellerOrders(); }, [user?.role, fetchSellerOrders]);
   if (!user || user.role !== "seller") {

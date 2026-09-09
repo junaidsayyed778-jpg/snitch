@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Navigate, useNavigate, useLocation, Outlet } from 'react-router';
 
 /* --- Mock Helper Icons --- */
@@ -10,7 +11,8 @@ const TrendingUp = ({ size }) => <svg width={size} height={size} viewBox="0 0 24
 export default function SellerLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const hasUnreadOrders = useSelector((state) => state.notifications.hasUnreadOrders);
+
   const navItems = [
     { label: "Inventory", path: "/seller/dashboard", icon: <LayoutGrid size={18} /> },
     { label: "Orders", path: "/seller/orders", icon: <Package size={18} /> },
@@ -55,7 +57,10 @@ export default function SellerLayout() {
                   }}
                 >
                   <span className="text-[12px] font-semibold tracking-wide" style={{ fontFamily: "Inter, sans-serif" }}>{item.label}</span>
-                  {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#ffd700] shadow-[0_0_8px_#ffd700]" />}
+                  {item.path === "/seller/orders" && hasUnreadOrders && (
+                    <span className="ml-auto w-2 h-2 rounded-full bg-red-500" />
+                  )}
+                  {active && item.path !== "/seller/orders" && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#ffd700] shadow-[0_0_8px_#ffd700]" />}
                 </button>
               );
             })}

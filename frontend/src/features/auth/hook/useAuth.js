@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux"
 import { register, login, getMe, logout } from "../service/authApi"
 import { setLoading, setUser, setError } from "../state/authSlice"
 import { setCartUserId, clearCartState } from "../../products/state/cartSlice"
-import socket from "../../../socket"
+import socket, { connectSocket, disconnectSocket } from "../../../socket"
 
 export const useAuth = () => {
     const dispatch = useDispatch()
@@ -21,6 +21,7 @@ export const useAuth = () => {
 
             dispatch(setUser(data.user))
             dispatch(setCartUserId(data.user.id))
+            connectSocket()
 
             return data.user
 
@@ -43,6 +44,7 @@ export const useAuth = () => {
 
             dispatch(setUser(data.user))
             dispatch(setCartUserId(data.user.id))
+            connectSocket()
 
             return data.user
 
@@ -64,6 +66,7 @@ export const useAuth = () => {
 
             dispatch(setUser(data.user))
             dispatch(setCartUserId(data.user.id))
+            connectSocket()
 
         } catch (err) {
             if (err.response?.status !== 401) {
@@ -81,8 +84,7 @@ export const useAuth = () => {
     async function handleLogout() {
         try {
 
-            // 🔴 Stop socket before authentication cookie is removed
-            socket.disconnect()
+            disconnectSocket()
 
             await logout()
 
